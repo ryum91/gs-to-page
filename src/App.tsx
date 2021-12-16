@@ -192,17 +192,16 @@ function App() {
                   )
                   .map((categoryKey) => {
                     return (
-                      <p key={categoryKey}>
-                        <Tag
-                          style={{ cursor: 'pointer' }}
-                          color={headerColors[categoryKey]}
-                          onClick={() =>
-                            appendFilter(categoryKey, data[categoryKey])
-                          }
-                        >
-                          {data[categoryKey]}
-                        </Tag>
-                      </p>
+                      <Tag
+                        key={categoryKey}
+                        style={{ cursor: 'pointer' }}
+                        color={headerColors[categoryKey]}
+                        onClick={() =>
+                          appendFilter(categoryKey, data[categoryKey])
+                        }
+                      >
+                        {data[categoryKey]}
+                      </Tag>
                     );
                   })}
               </Card>
