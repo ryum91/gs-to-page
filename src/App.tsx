@@ -39,9 +39,8 @@ function App() {
       return;
     }
 
-    const resKey = JSON.parse(atob(key));
     const docs = new GoogleSpreadsheet(id);
-    await docs.useServiceAccountAuth(resKey);
+    docs.useApiKey(key);
     await docs.loadInfo();
     document.title = docs.title;
     setTitle(docs.title);

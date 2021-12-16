@@ -10,11 +10,7 @@ export const GeneratePage = () => {
 
   const handleClick = useCallback((inputId: string, inputKey: string) => {
     try {
-      setOutput(
-        `${window.location.href}?id=${inputId}&key=${btoa(
-          JSON.stringify(JSON.parse(inputKey))
-        )}`
-      );
+      setOutput(`${window.location.href}?id=${inputId}&key=${inputKey}`);
       window.alert('생성되었습니다.');
     } catch (e) {
       window.alert('값이 입력되지 않았거나, 잘못되었습니다.');
@@ -34,12 +30,11 @@ export const GeneratePage = () => {
         ></Input>
         <br />
         <br />
-        <Input.TextArea
+        <Input
           value={key}
           onChange={(e) => setKey(e.target.value)}
-          placeholder="JSON Key"
-          rows={10}
-        ></Input.TextArea>
+          placeholder="API Key"
+        ></Input>
         <br />키 발급:{' '}
         <a href="https://console.cloud.google.com/apis/credentials">
           Google Cloud Platform
