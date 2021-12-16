@@ -1,7 +1,7 @@
 {
   "name": "gs-to-page",
   "version": "0.1.0",
-  "private": true,
+  "homepage": "https://ryum91.github.io/gs-to-page/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",

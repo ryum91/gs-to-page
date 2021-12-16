@@ -66,7 +66,7 @@ function App() {
   useLayoutEffect(() => {
     init().catch((e) => {
       window.alert('ID나 KEY에 문제가 있습니다. 확인해주세요.');
-      window.location.href = window.location.origin;
+      window.location.href = `${window.location.origin}${window.location.pathname}`;
     });
   }, [init]);
 
