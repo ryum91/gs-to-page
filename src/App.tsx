@@ -1,6 +1,6 @@
 import { useCallback, useLayoutEffect, useMemo, useState } from 'react';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
-import { Space, Card, Tag } from 'antd';
+import { Space, Card, Tag, Divider } from 'antd';
 import { CopyOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import copy from 'copy-to-clipboard';
 
@@ -29,6 +29,7 @@ function App() {
   const [title, setTitle] = useState<string>('');
   const [headers, setHeaders] = useState<string[]>([]);
   const [dataRows, setDataRows] = useState<Record<string, string>[]>([]);
+  const [filters, setFilters] = useState<Record<string, string>[]>([]);
 
   const init = useCallback(async () => {
     if (!id) {
@@ -82,13 +83,53 @@ function App() {
     }, {} as Record<string, string>);
   }, [filteredHeaders]);
 
+  const appendFilter = useCallback(
+    (key: string, value: string) => {
+      const isDuplicate = filters.some((filter) => {
+        const [targetKey, targetValue] = Object.entries(filter)[0];
+        return targetKey === key && targetValue === value;
+      });
+
+      if (isDuplicate) {
+        return;
+      }
+
+      setFilters([...filters, { [key]: value }]);
+    },
+    [filters]
+  );
+
+  const removeFilter = useCallback(
+    (key: string, value: string) => {
+      setFilters(
+        filters.filter((filter) => {
+          const [targetKey, targetValue] = Object.entries(filter)[0];
+          return !(targetKey === key && targetValue === value);
+        })
+      );
+    },
+    [filters]
+  );
+
+  const filteredDataRow = useMemo(() => {
+    if (!filters.length) {
+      return dataRows;
+    }
+
+    return dataRows.filter((dataRow) => {
+      return filters.every((filter) => {
+        const [filterKey, filterValue] = Object.entries(filter)[0];
+        return dataRow[filterKey] === filterValue;
+      });
+    });
+  }, [dataRows, filters]);
+
   // const headerOptions = useMemo(() => {
   //   return filteredHeaders.reduce((prev, header) => {
   //     prev[header] = dataRows
   //       .map((dataRow) => dataRow[header])
-  //       .filter((data, index, origin) => {
-  //         return origin.indexOf(data) === index;
-  //       });
+  //       .filter((data, index, origin) => origin.indexOf(data) === index);
+  //     prev[header].push('ALL');
   //     return prev;
   //   }, {} as Record<string, string[]>);
   // }, [filteredHeaders, dataRows]);
@@ -102,28 +143,33 @@ function App() {
       <div className="header">
         <h1>{title}</h1>
       </div>
-      {/* <div className="filters">
-        {filteredHeaders.map((header) => {
-          return (
-            <Select key={header}>
-              {headerOptions[header]?.map((value, index) => {
-                return (
-                  <Select.Option key={`${value}-${index}`} value={value}>
-                    {value}
-                  </Select.Option>
-                );
-              })}
-            </Select>
-          );
-        })}
-      </div> */}
-      <div className="contents">
+      <div className="filters">
         <Space wrap>
-          {dataRows?.map((data, index) => {
+          {!!filters.length && <br />}
+          {filters.map((filter) => {
+            const [key, value] = Object.entries(filter)[0];
+            return (
+              <Tag
+                key={`${key}-${value}`}
+                closable
+                color={headerColors[key]}
+                onClose={() => removeFilter(key, value)}
+              >
+                {value}
+              </Tag>
+            );
+          })}
+        </Space>
+      </div>
+      <Divider></Divider>
+      <div className="contents">
+        <Space align="center" wrap>
+          {filteredDataRow.map((data, index) => {
             return (
               <Card
                 key={index}
                 title={data.name}
+                size="small"
                 actions={[
                   <PlayCircleOutlined
                     key="이동"
@@ -151,7 +197,13 @@ function App() {
                   .map((categoryKey) => {
                     return (
                       <p key={categoryKey}>
-                        <Tag color={headerColors[categoryKey]}>
+                        <Tag
+                          style={{ cursor: 'pointer' }}
+                          color={headerColors[categoryKey]}
+                          onClick={() =>
+                            appendFilter(categoryKey, data[categoryKey])
+                          }
+                        >
                           {data[categoryKey]}
                         </Tag>
                       </p>

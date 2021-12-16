@@ -3,3 +3,7 @@
 .header {
   text-align: center;
 }
+
+.container {
+  padding-bottom: 20px;
+}
