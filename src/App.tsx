@@ -116,7 +116,10 @@ function App() {
     return dataRows.filter((dataRow) => {
       return filters.every((filter) => {
         const [filterKey, filterValue] = Object.entries(filter)[0];
-        return dataRow[filterKey] === filterValue;
+        return (
+          dataRow[filterKey] === filterValue ||
+          dataRow[filterKey].split(',').includes(filterValue)
+        );
       });
     });
   }, [dataRows, filters]);

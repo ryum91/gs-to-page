@@ -42,16 +42,17 @@ export const CardView = ({ dataRows, headerColors, appendFilter }: Props) => {
                   data[key] !== undefined
               )
               .map((categoryKey) => {
-                return (
+                const values = data[categoryKey].split(',');
+                return values.map((value) => (
                   <Tag
-                    key={categoryKey}
+                    key={`${categoryKey}-${value}`}
                     style={{ cursor: 'pointer' }}
                     color={headerColors[categoryKey]}
-                    onClick={() => appendFilter(categoryKey, data[categoryKey])}
+                    onClick={() => appendFilter(categoryKey, value)}
                   >
-                    {data[categoryKey]}
+                    {value}
                   </Tag>
-                );
+                ));
               })}
           </Card>
         );

@@ -46,16 +46,17 @@ export const ListView = ({ dataRows, headerColors, appendFilter }: Props) => {
                   item[key] !== undefined
               )
               .map((categoryKey) => {
-                return (
+                const values = item[categoryKey].split(',');
+                return values.map((value) => (
                   <Tag
-                    key={categoryKey}
+                    key={`${categoryKey}-${value}`}
                     style={{ cursor: 'pointer' }}
                     color={headerColors[categoryKey]}
-                    onClick={() => appendFilter(categoryKey, item[categoryKey])}
+                    onClick={() => appendFilter(categoryKey, value)}
                   >
-                    {item[categoryKey]}
+                    {value}
                   </Tag>
-                );
+                ));
               })}
           />
         </List.Item>
