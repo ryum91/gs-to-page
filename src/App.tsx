@@ -1,15 +1,15 @@
 import { useCallback, useLayoutEffect, useMemo, useState } from 'react';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
-import { Space, Card, Tag, Divider } from 'antd';
-import { CopyOutlined, PlayCircleOutlined } from '@ant-design/icons';
-import copy from 'copy-to-clipboard';
+import { Space, Tag, Divider, Button } from 'antd';
 
+import { CardView, ListView } from './views';
 import { GeneratePage } from './GeneratePage';
 import './App.css';
 
 const params = new URLSearchParams(window.location.search);
 const key = params.get('key') ?? 'AIzaSyCVFJD2CdbZlE6TxlYvVWFMe3OXX03AKBE';
 const id = params.get('id');
+const viewParam = params.get('view') ?? 'card';
 
 const colorSets = [
   'red',
@@ -30,6 +30,7 @@ function App() {
   const [headers, setHeaders] = useState<string[]>([]);
   const [dataRows, setDataRows] = useState<Record<string, string>[]>([]);
   const [filters, setFilters] = useState<Record<string, string>[]>([]);
+  const [view, setView] = useState<'card' | 'list'>(viewParam as any);
 
   const init = useCallback(async () => {
     if (!id) {
@@ -120,6 +121,10 @@ function App() {
     });
   }, [dataRows, filters]);
 
+  const toggleView = useCallback(() => {
+    setView(view === 'card' ? 'list' : 'card');
+  }, [view]);
+
   // const headerOptions = useMemo(() => {
   //   return filteredHeaders.reduce((prev, header) => {
   //     prev[header] = dataRows
@@ -138,6 +143,11 @@ function App() {
     <div className="container">
       <div className="header">
         <h1>{title}</h1>
+      </div>
+      <div className="actions">
+        <Button onClick={toggleView}>
+          {view === 'card' ? '리스트뷰' : '카드뷰'}
+        </Button>
       </div>
       <div className="filters">
         <Space wrap>
@@ -159,55 +169,19 @@ function App() {
       </div>
       <Divider></Divider>
       <div className="contents">
-        <Space align="center" wrap>
-          {filteredDataRow.map((data, index) => {
-            return (
-              <Card
-                key={index}
-                title={data.name}
-                size="small"
-                actions={[
-                  <PlayCircleOutlined
-                    key="이동"
-                    onClick={() => {
-                      window.location.href = data.link;
-                    }}
-                  />,
-                  <CopyOutlined
-                    key="복사"
-                    onClick={() => {
-                      copy(data.link);
-                      window.alert(`복사되었습니다.\n\n${data.link}`);
-                    }}
-                  />,
-                ]}
-              >
-                {Object.keys(data)
-                  .filter(
-                    (key) =>
-                      key !== '' &&
-                      key !== 'name' &&
-                      key !== 'link' &&
-                      data[key] !== undefined
-                  )
-                  .map((categoryKey) => {
-                    return (
-                      <Tag
-                        key={categoryKey}
-                        style={{ cursor: 'pointer' }}
-                        color={headerColors[categoryKey]}
-                        onClick={() =>
-                          appendFilter(categoryKey, data[categoryKey])
-                        }
-                      >
-                        {data[categoryKey]}
-                      </Tag>
-                    );
-                  })}
-              </Card>
-            );
-          })}
-        </Space>
+        {view === 'card' ? (
+          <CardView
+            dataRows={filteredDataRow}
+            headerColors={headerColors}
+            appendFilter={appendFilter}
+          />
+        ) : (
+          <ListView
+            dataRows={filteredDataRow}
+            headerColors={headerColors}
+            appendFilter={appendFilter}
+          />
+        )}
       </div>
     </div>
   );

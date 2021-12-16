@@ -7,3 +7,8 @@
 .container {
   padding-bottom: 20px;
 }
+
+.actions {
+  margin-bottom: 10px;
+  text-align: right;
+}
