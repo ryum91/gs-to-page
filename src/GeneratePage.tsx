@@ -10,7 +10,9 @@ export const GeneratePage = () => {
 
   const handleClick = useCallback((inputId: string, inputKey: string) => {
     try {
-      setOutput(`${window.location.href}?id=${inputId}&key=${inputKey}`);
+      setOutput(
+        `${window.location.href}?id=${inputId}${inputKey && `&key=${inputKey}`}`
+      );
       window.alert('생성되었습니다.');
     } catch (e) {
       window.alert('값이 입력되지 않았거나, 잘못되었습니다.');
@@ -33,7 +35,7 @@ export const GeneratePage = () => {
         <Input
           value={key}
           onChange={(e) => setKey(e.target.value)}
-          placeholder="API Key"
+          placeholder="API Key (Optional)"
         ></Input>
         <br />키 발급:{' '}
         <a href="https://console.cloud.google.com/apis/credentials">

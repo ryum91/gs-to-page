@@ -8,7 +8,7 @@ import { GeneratePage } from './GeneratePage';
 import './App.css';
 
 const params = new URLSearchParams(window.location.search);
-const key = params.get('key');
+const key = params.get('key') ?? 'AIzaSyCVFJD2CdbZlE6TxlYvVWFMe3OXX03AKBE';
 const id = params.get('id');
 
 const colorSets = [
@@ -33,10 +33,6 @@ function App() {
 
   const init = useCallback(async () => {
     if (!id) {
-      return;
-    }
-
-    if (!key) {
       return;
     }
 
@@ -65,7 +61,7 @@ function App() {
 
   useLayoutEffect(() => {
     init().catch((e) => {
-      window.alert('ID나 KEY에 문제가 있습니다. 확인해주세요.');
+      window.alert('ID나 KEY에 문제가 있습니다. 다시 확인해주세요.');
       window.location.href = `${window.location.origin}${window.location.pathname}`;
     });
   }, [init]);
